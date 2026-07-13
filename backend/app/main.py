@@ -6,8 +6,8 @@ from app.models.user import User
 from app.users.user import router as user_router
 from app.models.exam import Exam
 from app.api.exam import router as exam_router
-
-Base.metadata.create_all(bind=engine)
+from app.models.subject import Subject
+from app.api.subject import router as subject_router
 
 app = FastAPI(
     title="CIVICA API"
@@ -16,6 +16,7 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(exam_router)
+app.include_router(subject_router)
 
 
 @app.get("/")
