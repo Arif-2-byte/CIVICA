@@ -11,6 +11,8 @@ from app.db.database import Base
 from app.models.user import User
 from app.models.exam import Exam
 from app.models.subject import Subject
+from app.models.topic import Topic
+from app.models.question import Question
 
 config = context.config
 

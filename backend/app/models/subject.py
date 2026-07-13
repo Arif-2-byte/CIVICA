@@ -23,3 +23,9 @@ class Subject(Base):
         "Exam",
         back_populates="subjects",
     )
+
+    topics = relationship(
+        "Topic",
+        back_populates="subject",
+        cascade="all, delete",
+    )

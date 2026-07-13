@@ -18,8 +18,9 @@ class Exam(Base):
     icon = Column(String(255), nullable=True)
 
     is_active = Column(Boolean, default=True)
+
     subjects = relationship(
-    "Subject",
-    back_populates="exam",
-    cascade="all, delete",
-)
+        "Subject",
+        back_populates="exam",
+        cascade="all, delete",
+    )
