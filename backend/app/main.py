@@ -14,6 +14,8 @@ from app.models.question import Question
 from app.api.question import router as question_router
 from app.models.test import Test
 from app.api.test import router as test_router
+from app.models.test_attempt import TestAttempt
+from app.api.test_attempt import router as test_attempt_router
 app = FastAPI(
     title="CIVICA API"
 )
@@ -25,6 +27,7 @@ app.include_router(subject_router)
 app.include_router(topic_router)
 app.include_router(question_router)
 app.include_router(test_router)
+app.include_router(test_attempt_router)
 
 @app.get("/")
 def root():

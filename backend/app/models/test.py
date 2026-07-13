@@ -33,3 +33,9 @@ class Test(Base):
         "Exam",
         back_populates="tests",
     )
+
+    attempts = relationship(
+    "TestAttempt",
+    back_populates="test",
+    cascade="all, delete",
+)

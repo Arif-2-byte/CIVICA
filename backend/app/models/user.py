@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 from app.db.database import Base
@@ -18,8 +19,7 @@ class User(Base):
     # Profile
     full_name = Column(String(100), nullable=True)
 
-    # Example:
-    # "UPSC,JKPSC,SSC"
+    # Example: UPSC,JKPSC,SSC
     exams = Column(String(255), nullable=False)
 
     # Account Status
@@ -37,4 +37,10 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now(),
+    )
+
+    test_attempts = relationship(
+        "TestAttempt",
+        back_populates="user",
+        cascade="all, delete",
     )

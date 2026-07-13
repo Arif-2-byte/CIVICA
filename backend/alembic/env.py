@@ -14,6 +14,7 @@ from app.models.subject import Subject
 from app.models.topic import Topic
 from app.models.question import Question
 from app.models.test import Test
+from app.models.test_attempt import TestAttempt
 
 config = context.config
 
