@@ -24,3 +24,9 @@ class Exam(Base):
         back_populates="exam",
         cascade="all, delete",
     )
+
+    tests = relationship(
+        "Test",
+        back_populates="exam",
+        cascade="all, delete",
+    )

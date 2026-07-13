@@ -13,6 +13,7 @@ from app.models.exam import Exam
 from app.models.subject import Subject
 from app.models.topic import Topic
 from app.models.question import Question
+from app.models.test import Test
 
 config = context.config
 
