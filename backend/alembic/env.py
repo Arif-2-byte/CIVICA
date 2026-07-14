@@ -15,7 +15,7 @@ from app.models.topic import Topic
 from app.models.question import Question
 from app.models.test import Test
 from app.models.test_attempt import TestAttempt
-
+from app.models.attempt_question import AttemptQuestion
 config = context.config
 
 config.set_main_option(

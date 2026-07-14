@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from app.core.constants import TEST_STATUS_IN_PROGRESS
 from app.models.test import Test
 from app.models.test_attempt import TestAttempt
 from app.models.user import User
@@ -26,19 +27,49 @@ def create_test_attempt(
     user_id: int,
     attempt: TestAttemptCreate,
 ):
-    user = db.query(User).filter(User.id == user_id).first()
+    # Check if user exists
+    user = (
+        db.query(User)
+        .filter(User.id == user_id)
+        .first()
+    )
 
     if not user:
         return None
 
-    test = db.query(Test).filter(Test.id == attempt.test_id).first()
+    # Check if test exists
+    test = (
+        db.query(Test)
+        .filter(Test.id == attempt.test_id)
+        .first()
+    )
 
     if not test:
         return None
 
+    # Check if an active attempt already exists
+    existing_attempt = (
+        db.query(TestAttempt)
+        .filter(
+            TestAttempt.user_id == user_id,
+            TestAttempt.test_id == attempt.test_id,
+            TestAttempt.status == TEST_STATUS_IN_PROGRESS,
+        )
+        .first()
+    )
+
+    if existing_attempt:
+        return existing_attempt
+
+    # Create a new attempt
     db_attempt = TestAttempt(
         user_id=user_id,
         test_id=attempt.test_id,
+        score=0,
+        total_correct=0,
+        total_wrong=0,
+        total_skipped=0,
+        status=TEST_STATUS_IN_PROGRESS,
     )
 
     db.add(db_attempt)
