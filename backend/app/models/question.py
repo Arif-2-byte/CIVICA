@@ -51,7 +51,8 @@ class Question(Base):
     )
 
     attempt_questions = relationship(
-    "AttemptQuestion",
-    back_populates="question",
-    cascade="all, delete",
-)
+        "AttemptQuestion",
+        back_populates="question",
+        cascade="all, delete",
+    )
+    

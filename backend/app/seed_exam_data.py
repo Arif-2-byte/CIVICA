@@ -5,6 +5,7 @@ from app.db.session import SessionLocal
 from app.seeders.exams import seed_exams
 from app.seeders.subjects import seed_subjects
 from app.seeders.topics import seed_topics
+from app.seeders.questions import seed_questions
 
 
 def run():
@@ -29,6 +30,11 @@ def run():
         seed_topics(db)
 
         print("✓ Topics completed")
+
+        print("\nSeeding Questions...")
+        seed_questions(db)
+    
+        print("✓ Questions completed")
 
         print("\n" + "=" * 50)
         print("Exam database seeded successfully!")
