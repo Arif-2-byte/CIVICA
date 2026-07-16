@@ -17,6 +17,7 @@ from app.api.test import router as test_router
 from app.models.test_attempt import TestAttempt
 from app.api.test_attempt import router as test_attempt_router
 from app.models.attempt_question import AttemptQuestion
+from app.routers import test_question
 from app.api.attempt_question import (
     router as attempt_question_router,
 )
@@ -33,6 +34,7 @@ app.include_router(question_router)
 app.include_router(test_router)
 app.include_router(test_attempt_router)
 app.include_router(attempt_question_router)
+app.include_router(test_question.router)
 
 @app.get("/")
 def root():

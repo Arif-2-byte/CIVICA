@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
 
 from app.core.constants import TEST_STATUS_IN_PROGRESS
+from app.models.attempt_question import AttemptQuestion
 from app.models.test import Test
 from app.models.test_attempt import TestAttempt
+from app.models.test_question import TestQuestion
 from app.models.user import User
 from app.schemas.test_attempt import (
     TestAttemptCreate,
@@ -61,7 +63,7 @@ def create_test_attempt(
     if existing_attempt:
         return existing_attempt
 
-    # Create a new attempt
+    # Create new test attempt
     db_attempt = TestAttempt(
         user_id=user_id,
         test_id=attempt.test_id,
@@ -75,6 +77,27 @@ def create_test_attempt(
     db.add(db_attempt)
     db.commit()
     db.refresh(db_attempt)
+
+    # Fetch all questions assigned to this test
+    test_questions = (
+        db.query(TestQuestion)
+        .filter(TestQuestion.test_id == attempt.test_id)
+        .order_by(TestQuestion.display_order)
+        .all()
+    )
+
+    # Create AttemptQuestion entries
+    for test_question in test_questions:
+
+        attempt_question = AttemptQuestion(
+            attempt_id=db_attempt.id,
+            question_id=test_question.question_id,
+            display_order=test_question.display_order,
+        )
+
+        db.add(attempt_question)
+
+    db.commit()
 
     return db_attempt
 

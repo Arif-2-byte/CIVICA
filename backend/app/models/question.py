@@ -52,7 +52,12 @@ class Question(Base):
 
     attempt_questions = relationship(
         "AttemptQuestion",
-        back_populates="question",
-        cascade="all, delete",
+        back_populates="question",   
     )
+
+    test_questions = relationship(
+    "TestQuestion",
+    back_populates="question",
+    cascade="all, delete",
+)
     
