@@ -54,9 +54,14 @@ class TestAttempt(Base):
         "Test",
         back_populates="attempts",
     )
-    
+
     attempt_questions = relationship(
-    "AttemptQuestion",
-    back_populates="attempt",
-    cascade="all, delete",
-)
+        "AttemptQuestion",
+        back_populates="attempt",
+    )
+
+    attempt_answers = relationship(
+        "AttemptAnswer",
+        back_populates="attempt",
+        cascade="all, delete",
+    )

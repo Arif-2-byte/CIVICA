@@ -16,6 +16,7 @@ from app.models.question import Question
 from app.models.test import Test
 from app.models.test_attempt import TestAttempt
 from app.models.attempt_question import AttemptQuestion
+from app.models.attempt_answer import AttemptAnswer
 from app.models.test_question import TestQuestion
 config = context.config
 

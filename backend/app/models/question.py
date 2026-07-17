@@ -55,6 +55,11 @@ class Question(Base):
         back_populates="question",   
     )
 
+    attempt_answers = relationship(
+    "AttemptAnswer",
+    back_populates="question",
+)
+
     test_questions = relationship(
     "TestQuestion",
     back_populates="question",

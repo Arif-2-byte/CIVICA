@@ -17,7 +17,10 @@ from app.api.test import router as test_router
 from app.models.test_attempt import TestAttempt
 from app.api.test_attempt import router as test_attempt_router
 from app.models.attempt_question import AttemptQuestion
-from app.routers import test_question
+from app.api import test_question
+from app.api import attempt_answer
+from app.api import result
+print("Result router imported successfully")
 from app.api.attempt_question import (
     router as attempt_question_router,
 )
@@ -35,9 +38,19 @@ app.include_router(test_router)
 app.include_router(test_attempt_router)
 app.include_router(attempt_question_router)
 app.include_router(test_question.router)
+app.include_router(attempt_answer.router)
+app.include_router(result.router)
+print("Result router included")
 
 @app.get("/")
 def root():
     return {
         "message": "Welcome to CIVICA API"
     }
+print("\n========== REGISTERED ROUTES ==========")
+
+for route in app.routes:
+    methods = getattr(route, "methods", None)
+    print(route.path, methods)
+
+print("=======================================\n")
