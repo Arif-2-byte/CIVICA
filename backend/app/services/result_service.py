@@ -12,7 +12,7 @@ def get_result_summary(db: Session, attempt_id: int):
         .first()
     )
 
-    if not attempt:
+    if attempt is None:
         return None
 
     test = (
@@ -21,10 +21,10 @@ def get_result_summary(db: Session, attempt_id: int):
         .first()
     )
 
-    if not test:
+    if test is None:
         return None
 
-    total_marks = test.total_marks if test.total_marks else 0
+    total_marks = test.total_marks or 0
 
     percentage = (
         (attempt.score / total_marks) * 100
@@ -32,13 +32,11 @@ def get_result_summary(db: Session, attempt_id: int):
         else 0
     )
 
-    attempted_questions = (
-        attempt.total_correct + attempt.total_wrong
-    )
+    attempted = attempt.total_correct + attempt.total_wrong
 
     accuracy = (
-        (attempt.total_correct / attempted_questions) * 100
-        if attempted_questions > 0
+        (attempt.total_correct / attempted) * 100
+        if attempted > 0
         else 0
     )
 

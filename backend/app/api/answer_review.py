@@ -2,32 +2,32 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.db.database import get_db
-from app.schemas.result import ResultSummary
-from app.services import result_service
+from app.schemas.answer_review import AnswerReview
+from app.services import answer_review_service
 
 router = APIRouter(
-    prefix="/results",
-    tags=["Results"],
+    prefix="/answer-review",
+    tags=["Answer Review"],
 )
 
 
 @router.get(
     "/{attempt_id}",
-    response_model=ResultSummary,
+    response_model=list[AnswerReview],
 )
-def get_result(
+def review_answers(
     attempt_id: int,
     db: Session = Depends(get_db),
 ):
-    result = result_service.get_result_summary(
+    review = answer_review_service.get_answer_review(
         db=db,
         attempt_id=attempt_id,
     )
 
-    if result is None:
+    if review is None:
         raise HTTPException(
             status_code=404,
-            detail="Result not found",
+            detail="No answers found for this attempt.",
         )
 
-    return result
+    return review

@@ -44,3 +44,9 @@ class User(Base):
         back_populates="user",
         cascade="all, delete",
     )
+
+    mistake_notebook = relationship(
+    "MistakeNotebook",
+    back_populates="user",
+    cascade="all, delete-orphan",
+)

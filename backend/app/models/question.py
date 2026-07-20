@@ -37,6 +37,46 @@ class Question(Base):
 
     source = Column(String(100), nullable=True)
 
+    language = Column(
+        String(20),
+        default="English",
+    )
+
+    question_type = Column(
+        String(30),
+        default="MCQ",
+    )
+
+    exam_stage = Column(
+        String(30),
+        default="Prelims",
+    )
+
+    is_pyq = Column(
+        Boolean,
+        default=False,
+    )
+
+    tags = Column(
+       String(500),
+       nullable=True,
+    )
+
+    estimated_time = Column(
+       Integer,
+       default=60,
+    )
+
+    hint = Column(
+       Text,
+       nullable=True,
+    )
+
+    image_url = Column(
+        String(500),
+        nullable=True,
+    )
+
     is_active = Column(Boolean, default=True)
 
     topic_id = Column(
@@ -52,17 +92,22 @@ class Question(Base):
 
     attempt_questions = relationship(
         "AttemptQuestion",
-        back_populates="question",   
+        back_populates="question",
     )
 
     attempt_answers = relationship(
-    "AttemptAnswer",
-    back_populates="question",
-)
+        "AttemptAnswer",
+        back_populates="question",
+    )
 
     test_questions = relationship(
-    "TestQuestion",
-    back_populates="question",
-    cascade="all, delete",
-)
-    
+        "TestQuestion",
+        back_populates="question",
+        cascade="all, delete",
+    )
+
+    mistake_notebook_entries = relationship(
+        "MistakeNotebook",
+        back_populates="question",
+        cascade="all, delete-orphan",
+    )

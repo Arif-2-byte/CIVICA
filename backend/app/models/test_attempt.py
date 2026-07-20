@@ -65,3 +65,9 @@ class TestAttempt(Base):
         back_populates="attempt",
         cascade="all, delete",
     )
+
+    mistake_notebook_entries = relationship(
+    "MistakeNotebook",
+    back_populates="attempt",
+    cascade="all, delete-orphan",
+)

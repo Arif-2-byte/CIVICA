@@ -18,6 +18,7 @@ from app.models.test_attempt import TestAttempt
 from app.models.attempt_question import AttemptQuestion
 from app.models.attempt_answer import AttemptAnswer
 from app.models.test_question import TestQuestion
+from app.models.mistake_notebook import MistakeNotebook
 config = context.config
 
 config.set_main_option(
