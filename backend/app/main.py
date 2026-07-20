@@ -37,6 +37,7 @@ from app.api import dashboard
 from app.api import admin_dashboard
 from app.models.mistake_notebook import MistakeNotebook
 from app.api import mistake_notebook
+from app.api import import_questions
 from app.api.attempt_question import (
     router as attempt_question_router,
 )
@@ -79,6 +80,7 @@ app.include_router(topic_analytics.router)
 app.include_router(dashboard.router)
 app.include_router(admin_dashboard.router)
 app.include_router(mistake_notebook.router)
+app.include_router(import_questions.router)
 app.openapi_schema = None
 
 @app.get("/")
