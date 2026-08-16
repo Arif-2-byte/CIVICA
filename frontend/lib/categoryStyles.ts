@@ -1,0 +1,15 @@
+export const categoryStyles: Record<string, { bg: string; text: string }> = {
+  "Polity & Governance": { bg: "bg-indigo-100", text: "text-indigo-700" },
+  Economy: { bg: "bg-emerald-100", text: "text-emerald-700" },
+  "Environment & Ecology": { bg: "bg-green-100", text: "text-green-700" },
+  "Science & Technology": { bg: "bg-cyan-100", text: "text-cyan-700" },
+  "International Relations": { bg: "bg-violet-100", text: "text-violet-700" },
+  "Awards & Honours": { bg: "bg-amber-100", text: "text-amber-700" },
+  Sports: { bg: "bg-orange-100", text: "text-orange-700" },
+  "Defence & Security": { bg: "bg-red-100", text: "text-red-700" },
+  "Person in News": { bg: "bg-pink-100", text: "text-pink-700" },
+  "Place in News": { bg: "bg-teal-100", text: "text-teal-700" },
+  "Schemes & Policies": { bg: "bg-blue-100", text: "text-blue-700" },
+  "Reports & Indices": { bg: "bg-slate-200", text: "text-slate-700" },
+  default: { bg: "bg-slate-100", text: "text-slate-700" },
+};

@@ -1,17 +1,63 @@
+import Link from "next/link";
+
+const studySteps = [
+  { number: "01", title: "Choose your exam", text: "Start with UPSC, a State PSC, SSC, Banking, or the exam you are preparing for." },
+  { number: "02", title: "Build understanding", text: "Turn reliable current affairs and uploaded PDFs into exam-ready notes and practice." },
+  { number: "03", title: "Revise with purpose", text: "Return to high-value concepts, practice weak areas, and prepare with more clarity." },
+];
+
+function FeatureIcon({ type }: { type: "source" | "study" | "practice" }) {
+  const common = "h-6 w-6";
+  if (type === "source") return <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v14.5A2.5 2.5 0 0 0 17.5 15H4V5.5Z" /><path d="M4 15v1.5A2.5 2.5 0 0 0 6.5 19H20" /><path d="M8 7h8M8 11h5" /></svg>;
+  if (type === "study") return <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M12 3v18M4.8 6.8C7.1 5.6 9.6 5.7 12 7v12c-2.4-1.3-4.9-1.4-7.2-.2V6.8ZM19.2 6.8C16.9 5.6 14.4 5.7 12 7v12c2.4-1.3 4.9-1.4 7.2-.2V6.8Z" /></svg>;
+  return <svg className={common} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="m8.5 12 2.3 2.3 4.8-5" /></svg>;
+}
+
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center px-6">
-      <h1 className="text-6xl font-bold text-blue-900">
-        CIVICA
-      </h1>
+    <main className="overflow-hidden bg-[#f8f7f2] text-[#132a3a]">
+      <section className="relative isolate min-h-[720px] overflow-hidden border-b border-[#dfe5de]">
+        <div className="hero-grid absolute inset-0 -z-10 opacity-70" />
+        <div className="absolute left-[-9rem] top-16 -z-10 h-80 w-80 rounded-full bg-[#bfe8d8] blur-3xl" />
+        <div className="absolute right-[-5rem] top-24 -z-10 h-96 w-96 rounded-full bg-[#dbe8ff] blur-3xl" />
+        <div className="mx-auto max-w-7xl px-6 pb-16 pt-5 lg:px-8">
+          <header className="flex items-center justify-between rounded-2xl border border-white/70 bg-white/70 px-4 py-3 shadow-[0_12px_45px_rgba(28,55,73,0.06)] backdrop-blur md:px-5">
+            <Link href="/" className="flex items-center gap-2.5" aria-label="CIVICA home"><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#123a57] text-sm font-black tracking-[-0.08em] text-white shadow-lg shadow-[#123a57]/20">C</span><span className="text-lg font-extrabold tracking-[-0.06em] text-[#123a57]">CIVICA</span></Link>
+            <nav className="hidden items-center gap-7 text-sm font-medium text-[#536675] md:flex" aria-label="Main navigation"><a className="transition hover:text-[#123a57]" href="#why-civica">Why CIVICA</a><a className="transition hover:text-[#123a57]" href="#how-it-works">How it works</a><Link className="transition hover:text-[#123a57]" href="/feed">Current affairs</Link></nav>
+            <Link href="/feed" className="rounded-xl bg-[#123a57] px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-[#123a57]/15 transition hover:-translate-y-0.5 hover:bg-[#0b2d46]">Start learning</Link>
+          </header>
 
-      <p className="mt-6 text-2xl text-gray-700 text-center">
-        Your AI-Powered UPSC Current Affairs Companion
-      </p>
+          <div className="grid items-center gap-14 pb-8 pt-20 lg:grid-cols-[1.03fr_0.97fr] lg:pb-12 lg:pt-28">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#bcd9ce] bg-[#edf8f3] px-3 py-1.5 text-xs font-bold tracking-wide text-[#256151]"><span className="h-1.5 w-1.5 rounded-full bg-[#25a478]" />PREPARE WITH CLARITY</div>
+              <h1 className="mt-7 max-w-2xl text-5xl font-extrabold leading-[0.98] tracking-[-0.065em] text-[#102d43] sm:text-6xl lg:text-7xl">Turn study material into your next advantage.</h1>
+              <p className="mt-7 max-w-xl text-lg leading-8 text-[#516775] sm:text-xl">CIVICA brings current affairs, PDF study kits, question practice, and thoughtful revision into one focused learning space for competitive exams.</p>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row"><Link href="/feed" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e89a36] px-6 py-3.5 text-sm font-extrabold text-[#172a37] shadow-[0_14px_28px_rgba(232,154,54,0.25)] transition hover:-translate-y-0.5 hover:bg-[#f0a747]">Explore current affairs <span aria-hidden="true">→</span></Link><a href="#how-it-works" className="inline-flex items-center justify-center rounded-xl border border-[#cfd8d5] bg-white/70 px-6 py-3.5 text-sm font-bold text-[#284456] transition hover:border-[#95b4aa] hover:bg-white">See how CIVICA works</a></div>
+              <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-[#60717b]"><span className="flex items-center gap-2"><span className="text-[#25a478]">✓</span> Built around your exam</span><span className="flex items-center gap-2"><span className="text-[#25a478]">✓</span> Official sources first</span><span className="flex items-center gap-2"><span className="text-[#25a478]">✓</span> Study, don&apos;t scroll</span></div>
+            </div>
 
-      <button className="mt-10 rounded-lg bg-blue-900 px-8 py-4 text-white text-lg hover:bg-blue-800 transition">
-        Get Started
-      </button>
+            <div className="relative mx-auto w-full max-w-[550px] lg:mx-0 lg:justify-self-end">
+              <div className="absolute -inset-5 rounded-[2rem] bg-[#bfded2]/45 blur-2xl" />
+              <div className="relative rounded-[1.75rem] border border-white/85 bg-[#133d59] p-3 shadow-[0_30px_70px_rgba(21,53,75,0.24)]"><div className="overflow-hidden rounded-[1.2rem] bg-[#f9fbf8] p-5 sm:p-6">
+                <div className="flex items-center justify-between border-b border-[#e2e9e5] pb-5"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#6a7f89]">Your study room</p><p className="mt-1 text-xl font-extrabold tracking-[-0.04em] text-[#16374c]">Good morning, Arif</p></div><div className="grid h-10 w-10 place-items-center rounded-full bg-[#e6f4ed] text-sm font-black text-[#238261]">AR</div></div>
+                <div className="mt-5 grid grid-cols-3 gap-3"><div className="rounded-2xl bg-[#eaf4f0] p-3"><p className="text-[10px] font-bold uppercase tracking-[0.11em] text-[#668179]">Read today</p><p className="mt-1 text-2xl font-extrabold text-[#1a6551]">12</p></div><div className="rounded-2xl bg-[#fff1dc] p-3"><p className="text-[10px] font-bold uppercase tracking-[0.11em] text-[#866a45]">Revision</p><p className="mt-1 text-2xl font-extrabold text-[#9a6425]">08</p></div><div className="rounded-2xl bg-[#e9f0ff] p-3"><p className="text-[10px] font-bold uppercase tracking-[0.11em] text-[#607491]">Accuracy</p><p className="mt-1 text-2xl font-extrabold text-[#2c5f9d]">84%</p></div></div>
+                <div className="mt-5 rounded-2xl border border-[#e1e8e4] bg-white p-4 shadow-sm"><div className="flex items-start gap-3"><div className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#153e5b] text-xs font-black text-white">CA</div><div className="min-w-0 flex-1"><div className="flex items-center justify-between gap-3"><p className="text-sm font-extrabold text-[#19384a]">Today&apos;s current affairs</p><span className="rounded-full bg-[#eaf4f0] px-2 py-0.5 text-[10px] font-bold text-[#287158]">UPSC</span></div><p className="mt-1 text-xs leading-5 text-[#6a7e88]">Read the why, the context, the exam angle, and the points worth revising.</p></div></div><div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#edf1ef]"><div className="h-full w-[68%] rounded-full bg-[#2da77e]" /></div></div>
+                <div className="mt-4 grid grid-cols-[1fr_auto] items-center gap-3 rounded-2xl bg-[#173d57] p-4 text-white"><div><p className="text-xs font-semibold text-[#bcd0dc]">Continue your focus</p><p className="mt-1 text-sm font-extrabold">Modern History: Revolt of 1857</p></div><span className="grid h-9 w-9 place-items-center rounded-xl bg-[#e89a36] font-bold text-[#15364e]">→</span></div>
+              </div></div>
+              <div className="absolute -bottom-6 -left-5 hidden rounded-2xl border border-white bg-white px-4 py-3 shadow-[0_15px_35px_rgba(26,52,70,0.16)] sm:block"><p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6d818a]">This week</p><p className="mt-1 text-sm font-extrabold text-[#1b3c50]">3 topics completed</p></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="why-civica" className="mx-auto max-w-7xl px-6 py-24 lg:px-8"><div className="grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-end"><div><p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#278361]">Designed for depth</p><h2 className="mt-4 max-w-md text-4xl font-extrabold leading-tight tracking-[-0.055em] text-[#102d43] sm:text-5xl">One clear system for serious preparation.</h2></div><p className="max-w-2xl text-lg leading-8 text-[#61737c]">The material is not the problem. Turning it into understanding, recall, and consistent practice is. CIVICA gives every important input a useful next step.</p></div>
+        <div className="mt-12 grid gap-5 md:grid-cols-3"><article className="rounded-3xl border border-[#dce5df] bg-white p-7 shadow-[0_16px_40px_rgba(32,62,80,0.05)]"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#e8f5ef] text-[#1b7b5e]"><FeatureIcon type="source" /></div><h3 className="mt-6 text-xl font-extrabold tracking-[-0.04em] text-[#19384a]">Source-aware current affairs</h3><p className="mt-3 leading-7 text-[#61737c]">Follow key updates from official and credible sources without turning preparation into endless news consumption.</p></article><article className="rounded-3xl border border-[#dce5df] bg-white p-7 shadow-[0_16px_40px_rgba(32,62,80,0.05)]"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#fff0db] text-[#a56822]"><FeatureIcon type="study" /></div><h3 className="mt-6 text-xl font-extrabold tracking-[-0.04em] text-[#19384a]">Study kits from your PDFs</h3><p className="mt-3 leading-7 text-[#61737c]">Build notes, focused questions, and revision prompts around material you already trust and use.</p></article><article className="rounded-3xl border border-[#dce5df] bg-white p-7 shadow-[0_16px_40px_rgba(32,62,80,0.05)]"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#e8f0ff] text-[#396ca6]"><FeatureIcon type="practice" /></div><h3 className="mt-6 text-xl font-extrabold tracking-[-0.04em] text-[#19384a]">Practice with feedback</h3><p className="mt-3 leading-7 text-[#61737c]">Keep questions tied to topics, learn from attempts, and return to concepts that need another look.</p></article></div>
+      </section>
+
+      <section id="how-it-works" className="border-y border-[#dce5df] bg-[#eaf3ef]"><div className="mx-auto max-w-7xl px-6 py-24 lg:px-8"><div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#278361]">A calmer way to prepare</p><h2 className="mt-4 text-4xl font-extrabold tracking-[-0.055em] text-[#102d43] sm:text-5xl">From information to retention.</h2></div><Link href="/feed" className="text-sm font-extrabold text-[#1a6551] transition hover:text-[#123a57]">Open the live feed →</Link></div><div className="mt-12 grid gap-4 md:grid-cols-3">{studySteps.map((step) => <article key={step.number} className="rounded-3xl border border-white/90 bg-white/70 p-7"><p className="text-sm font-black tracking-[-0.03em] text-[#e18a22]">{step.number}</p><h3 className="mt-8 text-xl font-extrabold tracking-[-0.04em] text-[#19384a]">{step.title}</h3><p className="mt-3 leading-7 text-[#61737c]">{step.text}</p></article>)}</div></div></section>
+
+      <section className="mx-auto max-w-7xl px-6 py-24 lg:px-8"><div className="relative overflow-hidden rounded-[2rem] bg-[#123a57] px-7 py-12 text-white shadow-[0_28px_60px_rgba(18,58,87,0.22)] sm:px-12 sm:py-16"><div className="absolute -right-20 -top-28 h-72 w-72 rounded-full border-[28px] border-[#2e6484] opacity-60" /><div className="absolute -bottom-28 right-36 h-56 w-56 rounded-full bg-[#1a5b74] blur-2xl" /><div className="relative max-w-2xl"><p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#a8d9c8]">Your focused study space</p><h2 className="mt-4 text-4xl font-extrabold leading-tight tracking-[-0.055em] sm:text-5xl">Stop collecting tabs. Start building momentum.</h2><p className="mt-5 max-w-xl text-lg leading-8 text-[#c9d8e0]">CIVICA is being built for ambitious learners who want their preparation to feel more deliberate, connected, and measurable.</p><Link href="/feed" className="mt-8 inline-flex rounded-xl bg-[#e89a36] px-6 py-3.5 text-sm font-extrabold text-[#16364b] transition hover:-translate-y-0.5 hover:bg-[#f3ad4d]">Start with today&apos;s updates</Link></div></div></section>
+      <footer className="border-t border-[#dce5df] px-6 py-8 lg:px-8"><div className="mx-auto flex max-w-7xl flex-col gap-4 text-sm text-[#6b7c85] sm:flex-row sm:items-center sm:justify-between"><div className="flex items-center gap-2 font-extrabold tracking-[-0.04em] text-[#123a57]"><span className="grid h-6 w-6 place-items-center rounded-lg bg-[#123a57] text-[10px] text-white">C</span> CIVICA</div><p>Learn. Understand. Revise.</p></div></footer>
     </main>
   );
 }
