@@ -1,6 +1,7 @@
 from sqlalchemy import (
     Boolean,
     Column,
+    Float,
     ForeignKey,
     Integer,
     String,
@@ -9,6 +10,11 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from app.db.database import Base
+from app.core.enums import (
+    DifficultyLevel,
+    QuestionType,
+    ExamStage,
+)
 
 
 class Question(Base):
@@ -16,60 +22,73 @@ class Question(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
-    question_text = Column(Text, nullable=False)
+    question_text = Column(
+        Text,
+        nullable=False,
+    )
 
-    option_a = Column(String(500), nullable=False)
-    option_b = Column(String(500), nullable=False)
-    option_c = Column(String(500), nullable=False)
-    option_d = Column(String(500), nullable=False)
+    explanation = Column(
+        Text,
+        nullable=True,
+    )
 
-    correct_option = Column(String(1), nullable=False)
+    hint = Column(
+        Text,
+        nullable=True,
+    )
 
-    explanation = Column(Text, nullable=True)
-
-    difficulty = Column(String(20), nullable=True)
-
-    marks = Column(Integer, default=2)
-
-    negative_marks = Column(Integer, default=0)
-
-    year = Column(Integer, nullable=True)
-
-    source = Column(String(100), nullable=True)
-
-    language = Column(
+    # Keep these as String columns in the database.
+    # We still use the enums for the default values.
+    difficulty = Column(
         String(20),
-        default="English",
+        nullable=False,
+        default=DifficultyLevel.MEDIUM.value,
     )
 
     question_type = Column(
         String(30),
-        default="MCQ",
+        nullable=False,
+        default=QuestionType.MCQ_SINGLE.value,
     )
 
     exam_stage = Column(
         String(30),
-        default="Prelims",
+        nullable=False,
+        default=ExamStage.PRELIMS.value,
     )
 
-    is_pyq = Column(
-        Boolean,
-        default=False,
+    marks = Column(
+        Float,
+        nullable=False,
+        default=2.0,
     )
 
-    tags = Column(
-       String(500),
-       nullable=True,
+    negative_marks = Column(
+        Float,
+        nullable=False,
+        default=0.0,
     )
 
     estimated_time = Column(
-       Integer,
-       default=60,
+        Integer,
+        nullable=False,
+        default=60,
     )
 
-    hint = Column(
-       Text,
-       nullable=True,
+    language = Column(
+        String(20),
+        nullable=False,
+        default="English",
+    )
+
+    year = Column(
+        Integer,
+        nullable=True,
+    )
+
+    source = Column(
+        String(100),
+        nullable=True,
     )
 
     image_url = Column(
@@ -77,17 +96,34 @@ class Question(Base):
         nullable=True,
     )
 
-    is_active = Column(Boolean, default=True)
+    is_pyq = Column(
+        Boolean,
+        nullable=False,
+        default=False,
+    )
+
+    is_active = Column(
+        Boolean,
+        nullable=False,
+        default=True,
+    )
 
     topic_id = Column(
         Integer,
         ForeignKey("topics.id"),
         nullable=False,
+        index=True,
     )
 
     topic = relationship(
         "Topic",
         back_populates="questions",
+    )
+
+    options = relationship(
+        "QuestionOption",
+        back_populates="question",
+        cascade="all, delete-orphan",
     )
 
     attempt_questions = relationship(
@@ -103,7 +139,7 @@ class Question(Base):
     test_questions = relationship(
         "TestQuestion",
         back_populates="question",
-        cascade="all, delete",
+        cascade="all, delete-orphan",
     )
 
     mistake_notebook_entries = relationship(

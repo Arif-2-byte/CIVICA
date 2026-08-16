@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
+from app.auth.jwt_handler import (
+    get_current_user,
+    require_admin,
+)
 from app.db.session import get_db
 from app.schemas.pagination import PaginatedResponse
 from app.schemas.question import (
@@ -18,11 +22,17 @@ from app.services.question_service import (
     update_question,
 )
 
+
 router = APIRouter(
     prefix="/questions",
     tags=["Questions"],
 )
 
+
+# ==========================================================
+# CREATE QUESTION
+# Admin only
+# ==========================================================
 
 @router.post(
     "/",
@@ -32,15 +42,27 @@ router = APIRouter(
 def create(
     question: QuestionCreate,
     db: Session = Depends(get_db),
+    current_user=Depends(require_admin),
 ):
-    if not topic_exists(db, question.topic_id):
+    if not topic_exists(
+        db,
+        question.topic_id,
+    ):
         raise HTTPException(
             status_code=404,
             detail="Topic not found",
         )
 
-    return create_question(db, question)
+    return create_question(
+        db,
+        question,
+    )
 
+
+# ==========================================================
+# GET ALL QUESTIONS
+# Authenticated users
+# ==========================================================
 
 @router.get(
     "/",
@@ -49,28 +71,19 @@ def create(
 def read_all(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-
     search: str | None = None,
-
     exam_id: int | None = None,
     subject_id: int | None = None,
     topic_id: int | None = None,
-
     difficulty: str | None = None,
-
     language: str | None = None,
-
     question_type: str | None = None,
-
     is_pyq: bool | None = None,
-
     year: int | None = None,
-
     sort_by: str = "id",
-
     sort_order: str = "desc",
-
     db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     filters = QuestionFilter(
         page=page,
@@ -94,6 +107,11 @@ def read_all(
     )
 
 
+# ==========================================================
+# GET ONE QUESTION
+# Authenticated users
+# ==========================================================
+
 @router.get(
     "/{question_id}",
     response_model=QuestionResponse,
@@ -101,6 +119,7 @@ def read_all(
 def read_one(
     question_id: int,
     db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
 ):
     question = get_question(
         db,
@@ -116,6 +135,11 @@ def read_one(
     return question
 
 
+# ==========================================================
+# UPDATE QUESTION
+# Admin only
+# ==========================================================
+
 @router.put(
     "/{question_id}",
     response_model=QuestionResponse,
@@ -124,10 +148,14 @@ def update(
     question_id: int,
     question: QuestionUpdate,
     db: Session = Depends(get_db),
+    current_user=Depends(require_admin),
 ):
     if (
         question.topic_id is not None
-        and not topic_exists(db, question.topic_id)
+        and not topic_exists(
+            db,
+            question.topic_id,
+        )
     ):
         raise HTTPException(
             status_code=404,
@@ -149,6 +177,11 @@ def update(
     return updated_question
 
 
+# ==========================================================
+# DELETE QUESTION
+# Admin only
+# ==========================================================
+
 @router.delete(
     "/{question_id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -156,6 +189,7 @@ def update(
 def delete(
     question_id: int,
     db: Session = Depends(get_db),
+    current_user=Depends(require_admin),
 ):
     deleted_question = delete_question(
         db,
@@ -167,3 +201,23 @@ def delete(
             status_code=404,
             detail="Question not found",
         )
+
+    if deleted_question == "USED_IN_ATTEMPT":
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Cannot delete this question because "
+                "it is already used in a student attempt."
+            ),
+        )
+
+    if deleted_question == "ASSIGNED_TO_TEST":
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Cannot delete this question because "
+                "it is currently assigned to a test."
+            ),
+        )
+
+    return None

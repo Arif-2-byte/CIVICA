@@ -1,5 +1,15 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+)
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 from app.db.database import Base
 
@@ -7,21 +17,117 @@ from app.db.database import Base
 class Test(Base):
     __tablename__ = "tests"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        Integer,
+        primary_key=True,
+        index=True,
+    )
 
-    title = Column(String(150), nullable=False)
+    title = Column(
+        String(150),
+        nullable=False,
+    )
 
-    description = Column(String(500), nullable=True)
+    description = Column(
+        Text,
+        nullable=True,
+    )
 
-    total_questions = Column(Integer, nullable=False)
+    instructions = Column(
+        Text,
+        nullable=True,
+    )
 
-    duration = Column(Integer, nullable=False)
+    test_type = Column(
+        String(30),
+        nullable=False,
+        default="Mock Test",
+    )
 
-    total_marks = Column(Integer, nullable=False)
+    difficulty = Column(
+        String(20),
+        nullable=False,
+        default="Mixed",
+    )
 
-    negative_marks = Column(Integer, default=0)
+    language = Column(
+        String(30),
+        nullable=False,
+        default="English",
+    )
 
-    is_active = Column(Boolean, default=True)
+    total_questions = Column(
+        Integer,
+        nullable=False,
+    )
+
+    duration = Column(
+        Integer,
+        nullable=False,
+    )
+
+    total_marks = Column(
+        Float,
+        nullable=False,
+    )
+
+    passing_marks = Column(
+        Float,
+        nullable=False,
+        default=0,
+    )
+
+    negative_marks = Column(
+        Float,
+        nullable=False,
+        default=0,
+    )
+
+    shuffle_questions = Column(
+        Boolean,
+        default=False,
+    )
+
+    shuffle_options = Column(
+        Boolean,
+        default=False,
+    )
+
+    show_result = Column(
+        Boolean,
+        default=True,
+    )
+
+    is_active = Column(
+        Boolean,
+        default=True,
+    )
+
+    is_published = Column(
+        Boolean,
+        default=False,
+    )
+
+    start_time = Column(
+        DateTime,
+        nullable=True,
+    )
+
+    end_time = Column(
+        DateTime,
+        nullable=True,
+    )
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )
+
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
 
     exam_id = Column(
         Integer,
@@ -35,12 +141,13 @@ class Test(Base):
     )
 
     attempts = relationship(
-    "TestAttempt",
-    back_populates="test",
-)
-    
+        "TestAttempt",
+        back_populates="test",
+        cascade="all, delete-orphan",
+    )
+
     test_questions = relationship(
-    "TestQuestion",
-    back_populates="test",
-    cascade="all, delete",
-)   
+        "TestQuestion",
+        back_populates="test",
+        cascade="all, delete-orphan",
+    )

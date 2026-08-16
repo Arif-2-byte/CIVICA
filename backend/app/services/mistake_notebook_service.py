@@ -11,6 +11,7 @@ def add_mistake(
 ):
     """
     Add a question to the mistake notebook.
+
     Avoid duplicate entries for the same user/question.
     """
 
@@ -39,6 +40,19 @@ def add_mistake(
     return mistake
 
 
+def get_mistake(
+    db: Session,
+    mistake_id: int,
+):
+    return (
+        db.query(MistakeNotebook)
+        .filter(
+            MistakeNotebook.id == mistake_id
+        )
+        .first()
+    )
+
+
 def get_user_mistakes(
     db: Session,
     user_id: int,
@@ -57,15 +71,12 @@ def mark_mastered(
     db: Session,
     mistake_id: int,
 ):
-    mistake = (
-        db.query(MistakeNotebook)
-        .filter(
-            MistakeNotebook.id == mistake_id,
-        )
-        .first()
+    mistake = get_mistake(
+        db,
+        mistake_id,
     )
 
-    if not mistake:
+    if mistake is None:
         return None
 
     mistake.mastered = True
@@ -80,15 +91,12 @@ def increase_revision_count(
     db: Session,
     mistake_id: int,
 ):
-    mistake = (
-        db.query(MistakeNotebook)
-        .filter(
-            MistakeNotebook.id == mistake_id,
-        )
-        .first()
+    mistake = get_mistake(
+        db,
+        mistake_id,
     )
 
-    if not mistake:
+    if mistake is None:
         return None
 
     mistake.revision_count += 1
@@ -103,15 +111,12 @@ def delete_mistake(
     db: Session,
     mistake_id: int,
 ):
-    mistake = (
-        db.query(MistakeNotebook)
-        .filter(
-            MistakeNotebook.id == mistake_id,
-        )
-        .first()
+    mistake = get_mistake(
+        db,
+        mistake_id,
     )
 
-    if not mistake:
+    if mistake is None:
         return False
 
     db.delete(mistake)

@@ -4,7 +4,6 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Integer,
-    String,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -25,27 +24,32 @@ class AttemptAnswer(Base):
         Integer,
         ForeignKey("test_attempts.id"),
         nullable=False,
+        index=True,
     )
 
     question_id = Column(
         Integer,
         ForeignKey("questions.id"),
         nullable=False,
+        index=True,
     )
 
+    # Stores question_options.id
     selected_option = Column(
-        String(1),
+        Integer,
         nullable=True,
     )
 
     is_marked_for_review = Column(
         Boolean,
+        nullable=False,
         default=False,
     )
 
     answered_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
+        nullable=False,
     )
 
     attempt = relationship(

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.models.attempt_answer import AttemptAnswer
+from app.models.question_option import QuestionOption
 from app.schemas.subject_analytics import SubjectAnalytics
 
 
@@ -10,7 +11,9 @@ def get_subject_analytics(
 ):
     answers = (
         db.query(AttemptAnswer)
-        .filter(AttemptAnswer.attempt_id == attempt_id)
+        .filter(
+            AttemptAnswer.attempt_id == attempt_id
+        )
         .all()
     )
 
@@ -21,8 +24,19 @@ def get_subject_analytics(
 
     for answer in answers:
         question = answer.question
+
+        if question is None:
+            continue
+
         topic = question.topic
+
+        if topic is None:
+            continue
+
         subject = topic.subject
+
+        if subject is None:
+            continue
 
         subject_name = subject.name
 
@@ -33,29 +47,70 @@ def get_subject_analytics(
                 "correct": 0,
                 "wrong": 0,
                 "skipped": 0,
-                "marks": 0,
+                "marks": 0.0,
             }
 
-        analytics[subject_name]["total_questions"] += 1
+        data = analytics[subject_name]
 
+        data["total_questions"] += 1
+
+        # Skipped
         if answer.selected_option is None:
-            analytics[subject_name]["skipped"] += 1
+            data["skipped"] += 1
+            continue
 
-        elif answer.selected_option == question.correct_option:
-            analytics[subject_name]["correct"] += 1
-            analytics[subject_name]["marks"] += question.marks
+        # Find selected option
+        selected_option = (
+            db.query(QuestionOption)
+            .filter(
+                QuestionOption.id
+                == answer.selected_option,
+                QuestionOption.question_id
+                == question.id,
+            )
+            .first()
+        )
 
+        # Invalid option is treated as wrong
+        if selected_option is None:
+            data["wrong"] += 1
+            data["marks"] -= float(
+                question.negative_marks
+            )
+            continue
+
+        # Correct
+        if selected_option.is_correct:
+            data["correct"] += 1
+            data["marks"] += float(
+                question.marks
+            )
+
+        # Wrong
         else:
-            analytics[subject_name]["wrong"] += 1
-            analytics[subject_name]["marks"] -= question.negative_marks
+            data["wrong"] += 1
+            data["marks"] -= float(
+                question.negative_marks
+            )
 
     result = []
 
     for data in analytics.values():
-        attempted = data["correct"] + data["wrong"]
+
+        attempted = (
+            data["correct"]
+            + data["wrong"]
+        )
 
         accuracy = (
-            round((data["correct"] / attempted) * 100, 2)
+            round(
+                (
+                    data["correct"]
+                    / attempted
+                )
+                * 100,
+                2,
+            )
             if attempted > 0
             else 0.0
         )
@@ -63,11 +118,16 @@ def get_subject_analytics(
         result.append(
             SubjectAnalytics(
                 subject=data["subject"],
-                total_questions=data["total_questions"],
+                total_questions=data[
+                    "total_questions"
+                ],
                 correct=data["correct"],
                 wrong=data["wrong"],
                 skipped=data["skipped"],
-                marks=data["marks"],
+                marks=round(
+                    data["marks"],
+                    2,
+                ),
                 accuracy=accuracy,
             )
         )

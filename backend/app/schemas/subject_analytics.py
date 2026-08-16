@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class SubjectAnalytics(BaseModel):
@@ -16,5 +16,6 @@ class SubjectAnalytics(BaseModel):
 
     accuracy: float
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )

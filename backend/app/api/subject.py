@@ -1,8 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.auth.jwt_handler import (
+    get_current_user,
+    require_admin,
+)
 from app.db.session import get_db
-from app.schemas.subject import SubjectCreate, SubjectResponse
+from app.models.user import User
+from app.schemas.subject import (
+    SubjectCreate,
+    SubjectResponse,
+)
 from app.services.subject_service import (
     create_subject,
     delete_subject,
@@ -11,33 +19,67 @@ from app.services.subject_service import (
     update_subject,
 )
 
+
 router = APIRouter(
     prefix="/subjects",
     tags=["Subjects"],
 )
 
 
-@router.post("/", response_model=SubjectResponse)
+# ==========================================================
+# CREATE SUBJECT
+# Admin only
+# ==========================================================
+
+@router.post(
+    "/",
+    response_model=SubjectResponse,
+)
 def create(
     subject: SubjectCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
-    return create_subject(db, subject)
+    return create_subject(
+        db,
+        subject,
+    )
 
 
-@router.get("/", response_model=list[SubjectResponse])
+# ==========================================================
+# GET ALL SUBJECTS
+# Authenticated users
+# ==========================================================
+
+@router.get(
+    "/",
+    response_model=list[SubjectResponse],
+)
 def read_all(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return get_subjects(db)
 
 
-@router.get("/{subject_id}", response_model=SubjectResponse)
+# ==========================================================
+# GET ONE SUBJECT
+# Authenticated users
+# ==========================================================
+
+@router.get(
+    "/{subject_id}",
+    response_model=SubjectResponse,
+)
 def read_one(
     subject_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    subject = get_subject(db, subject_id)
+    subject = get_subject(
+        db,
+        subject_id,
+    )
 
     if not subject:
         raise HTTPException(
@@ -48,11 +90,20 @@ def read_one(
     return subject
 
 
-@router.put("/{subject_id}", response_model=SubjectResponse)
+# ==========================================================
+# UPDATE SUBJECT
+# Admin only
+# ==========================================================
+
+@router.put(
+    "/{subject_id}",
+    response_model=SubjectResponse,
+)
 def update(
     subject_id: int,
     subject: SubjectCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
     updated = update_subject(
         db,
@@ -69,20 +120,35 @@ def update(
     return updated
 
 
+# ==========================================================
+# DELETE SUBJECT
+# Admin only
+# ==========================================================
+
 @router.delete("/{subject_id}")
 def delete(
     subject_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
     deleted = delete_subject(
         db,
         subject_id,
     )
 
-    if not deleted:
+    if deleted is None:
         raise HTTPException(
             status_code=404,
             detail="Subject not found",
+        )
+
+    if deleted == "HAS_TOPICS":
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Cannot delete this subject because "
+                "it contains topics."
+            ),
         )
 
     return {

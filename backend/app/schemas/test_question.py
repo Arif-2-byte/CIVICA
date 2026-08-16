@@ -1,10 +1,25 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TestQuestionBase(BaseModel):
     test_id: int
     question_id: int
-    display_order: int
+
+    section_name: str | None = None
+
+    display_order: int = Field(..., ge=1)
+
+    marks_override: float | None = Field(
+        default=None,
+        ge=0,
+    )
+
+    negative_marks_override: float | None = Field(
+        default=None,
+        ge=0,
+    )
+
+    is_mandatory: bool = False
 
 
 class TestQuestionCreate(TestQuestionBase):
@@ -12,11 +27,29 @@ class TestQuestionCreate(TestQuestionBase):
 
 
 class TestQuestionUpdate(BaseModel):
-    display_order: int | None = None
+    section_name: str | None = None
+
+    display_order: int | None = Field(
+        default=None,
+        ge=1,
+    )
+
+    marks_override: float | None = Field(
+        default=None,
+        ge=0,
+    )
+
+    negative_marks_override: float | None = Field(
+        default=None,
+        ge=0,
+    )
+
+    is_mandatory: bool | None = None
 
 
 class TestQuestionResponse(TestQuestionBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True,
+    )

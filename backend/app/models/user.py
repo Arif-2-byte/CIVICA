@@ -16,10 +16,18 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
 
+    role = Column(
+        String(20),
+        nullable=False,
+        default="student",
+        server_default="student",
+        index=True,
+    )
+
     # Profile
     full_name = Column(String(100), nullable=True)
 
-    # Example: UPSC,JKPSC,SSC
+    # Example: UPSC, JKPSC, SSC
     exams = Column(String(255), nullable=False)
 
     # Account Status
@@ -39,6 +47,7 @@ class User(Base):
         onupdate=func.now(),
     )
 
+    # Relationships
     test_attempts = relationship(
         "TestAttempt",
         back_populates="user",
@@ -46,7 +55,13 @@ class User(Base):
     )
 
     mistake_notebook = relationship(
-    "MistakeNotebook",
+        "MistakeNotebook",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    sessions = relationship(
+    "Session",
     back_populates="user",
     cascade="all, delete-orphan",
 )

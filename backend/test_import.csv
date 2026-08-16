@@ -1,0 +1,2 @@
+exam,subject,topic,question_text,option_a,option_b,option_c,option_d,correct_option,explanation,marks,negative_marks,difficulty,question_type,exam_stage,estimated_time,language,year,source,is_pyq
+UPSC,Polity,Fundamental Rights,Which Article of the Indian Constitution guarantees equality before law?,Article 14,Article 19,Article 21,Article 32, A,Article 14 guarantees equality before law.,2,0.66,Medium,MCQ_SINGLE,Prelims,60,English,2024,UPSC,true

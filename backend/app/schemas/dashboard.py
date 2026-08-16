@@ -1,18 +1,18 @@
 from datetime import datetime
-from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class RecentTest(BaseModel):
     attempt_id: int
     test_name: str
-    score: int
+    score: float
     status: str
-    submitted_at: datetime | None
+    submitted_at: datetime | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )
 
 
 class Dashboard(BaseModel):
@@ -20,7 +20,7 @@ class Dashboard(BaseModel):
     tests_completed: int
 
     average_score: float
-    highest_score: int
+    highest_score: float
 
     average_accuracy: float
 
@@ -28,7 +28,8 @@ class Dashboard(BaseModel):
     total_wrong: int
     total_skipped: int
 
-    recent_tests: List[RecentTest]
+    recent_tests: list[RecentTest]
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True
+    )

@@ -9,6 +9,7 @@ from app.db.database import Base
 
 # Import all models here
 from app.models.user import User
+from app.models.session import Session
 from app.models.exam import Exam
 from app.models.subject import Subject
 from app.models.topic import Topic
@@ -19,6 +20,7 @@ from app.models.attempt_question import AttemptQuestion
 from app.models.attempt_answer import AttemptAnswer
 from app.models.test_question import TestQuestion
 from app.models.mistake_notebook import MistakeNotebook
+from app.models.current_affair import CurrentAffair
 config = context.config
 
 config.set_main_option(

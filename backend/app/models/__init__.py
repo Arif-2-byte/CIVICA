@@ -1,5 +1,6 @@
 from .attempt_answer import AttemptAnswer
 from .attempt_question import AttemptQuestion
+from .current_affair import CurrentAffair
 from .exam import Exam
 from .mistake_notebook import MistakeNotebook
 from .question import Question
@@ -9,3 +10,5 @@ from .test_attempt import TestAttempt
 from .test_question import TestQuestion
 from .topic import Topic
 from .user import User
+from .session import Session
+from app.models.question_option import QuestionOption

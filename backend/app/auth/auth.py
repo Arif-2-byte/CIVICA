@@ -1,11 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from app.auth.jwt_handler import create_access_token
+from app.auth.jwt_handler import get_current_user
 from app.db.session import get_db
-from app.schemas.user import UserCreate, UserLogin, UserResponse
+from app.schemas.auth import (
+    LoginResponse,
+    RefreshTokenRequest,
+    RefreshTokenResponse,
+)
+from app.schemas.user import (
+    UserCreate,
+    UserResponse,
+)
+from app.services.auth_service import (
+    login as login_user,
+    refresh_access_token,
+)
 from app.services.user_service import (
-    authenticate_user,
     create_user,
     get_user_by_email,
     get_user_by_username,
@@ -17,6 +29,10 @@ router = APIRouter(
 )
 
 
+# ==========================================================
+# Test Endpoint
+# ==========================================================
+
 @router.get("/test")
 def test_auth():
     return {
@@ -24,7 +40,14 @@ def test_auth():
     }
 
 
-@router.post("/register", response_model=UserResponse)
+# ==========================================================
+# Register
+# ==========================================================
+
+@router.post(
+    "/register",
+    response_model=UserResponse,
+)
 def register(
     user: UserCreate,
     db: Session = Depends(get_db),
@@ -44,34 +67,75 @@ def register(
     return create_user(db, user)
 
 
-from fastapi.security import OAuth2PasswordRequestForm
-@router.post("/login")
+# ==========================================================
+# Login
+# ==========================================================
+
+@router.post(
+    "/login",
+    response_model=LoginResponse,
+)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
 ):
-    db_user = authenticate_user(
-        db,
-        form_data.username,
-        form_data.password,
+    result = login_user(
+        db=db,
+        username=form_data.username,
+        password=form_data.password,
     )
 
-    if not db_user:
+    if result is None:
         raise HTTPException(
             status_code=401,
             detail="Invalid username or password",
         )
 
-    access_token = create_access_token(
-        {
-            "sub": db_user.username
-        }
+    return result
+
+
+# ==========================================================
+# Refresh Token
+# ==========================================================
+
+@router.post(
+    "/refresh",
+    response_model=RefreshTokenResponse,
+)
+def refresh(
+    request: RefreshTokenRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Refresh access token using a valid refresh token.
+    """
+
+    result = refresh_access_token(
+        db=db,
+        refresh_token=request.refresh_token,
     )
 
-    return {
-        "access_token": access_token,
-        "token_type": "bearer",
-        "username": db_user.username,
-        "premium": db_user.is_premium,
-        "exams": db_user.exams,
-    }
+    if result is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired refresh token.",
+        )
+
+    return result
+
+
+# ==========================================================
+# Current User
+# ==========================================================
+
+@router.get(
+    "/me",
+    response_model=UserResponse,
+)
+def me(
+    current_user=Depends(get_current_user),
+):
+    """
+    Return the currently authenticated user.
+    """
+    return current_user

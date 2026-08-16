@@ -1,7 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.auth.jwt_handler import (
+    get_current_user,
+    require_admin,
+)
 from app.db.session import get_db
+from app.models.user import User
 from app.schemas.test_question import (
     TestQuestionCreate,
     TestQuestionResponse,
@@ -15,94 +20,153 @@ from app.services.test_question_service import (
     update_test_question,
 )
 
+
 router = APIRouter(
     prefix="/test-questions",
     tags=["Test Questions"],
 )
 
 
-@router.get("/", response_model=list[TestQuestionResponse])
-def read_test_questions(
-    db: Session = Depends(get_db),
-):
-    return get_test_questions(db)
+# ==========================================================
+# CREATE TEST QUESTION
+# Admin only
+# ==========================================================
 
-
-@router.get("/{test_question_id}", response_model=TestQuestionResponse)
-def read_test_question(
-    test_question_id: int,
-    db: Session = Depends(get_db),
-):
-    test_question = get_test_question(
-        db,
-        test_question_id,
-    )
-
-    if not test_question:
-        raise HTTPException(
-            status_code=404,
-            detail="Test Question not found",
-        )
-
-    return test_question
-
-
-@router.post("/", response_model=TestQuestionResponse)
-def create_new_test_question(
+@router.post(
+    "/",
+    response_model=TestQuestionResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create(
     test_question: TestQuestionCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
-    new_test_question = create_test_question(
+    result = create_test_question(
         db,
         test_question,
     )
 
-    if not new_test_question:
+    if result is None:
         raise HTTPException(
             status_code=404,
             detail="Test or Question not found",
         )
 
-    return new_test_question
+    return result
 
 
-@router.put("/{test_question_id}", response_model=TestQuestionResponse)
-def update_existing_test_question(
+# ==========================================================
+# GET ALL TEST QUESTIONS
+# Authenticated users
+# ==========================================================
+
+@router.get(
+    "/",
+    response_model=list[TestQuestionResponse],
+)
+def read_all(
+    test_id: int | None = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return get_test_questions(
+        db,
+        test_id,
+    )
+
+
+# ==========================================================
+# GET ONE TEST QUESTION
+# Authenticated users
+# ==========================================================
+
+@router.get(
+    "/{test_question_id}",
+    response_model=TestQuestionResponse,
+)
+def read_one(
+    test_question_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    result = get_test_question(
+        db,
+        test_question_id,
+    )
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Test question not found",
+        )
+
+    return result
+
+
+# ==========================================================
+# UPDATE TEST QUESTION
+# Admin only
+# ==========================================================
+
+@router.put(
+    "/{test_question_id}",
+    response_model=TestQuestionResponse,
+)
+def update(
     test_question_id: int,
     test_question: TestQuestionUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
-    updated_test_question = update_test_question(
+    result = update_test_question(
         db,
         test_question_id,
         test_question,
     )
 
-    if not updated_test_question:
+    if result is None:
         raise HTTPException(
             status_code=404,
-            detail="Test Question not found",
+            detail="Test question not found",
         )
 
-    return updated_test_question
+    return result
 
 
-@router.delete("/{test_question_id}")
-def remove_test_question(
+# ==========================================================
+# DELETE TEST QUESTION
+# Admin only
+# ==========================================================
+
+@router.delete(
+    "/{test_question_id}",
+)
+def delete(
     test_question_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
     deleted = delete_test_question(
         db,
         test_question_id,
     )
 
-    if not deleted:
+    if deleted is None:
         raise HTTPException(
             status_code=404,
-            detail="Test Question not found",
+            detail="Test question not found",
+        )
+
+    if deleted == "USED_IN_ATTEMPT":
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Cannot delete this test question because "
+                "it is already used in a student attempt."
+            ),
         )
 
     return {
-        "message": "Test Question deleted successfully"
+        "message": "Test question deleted successfully"
     }

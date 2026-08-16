@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class AnswerReview(BaseModel):
@@ -11,9 +11,9 @@ class AnswerReview(BaseModel):
     option_c: str
     option_d: str
 
-    your_answer: str | None
+    your_answer: int | None
 
-    correct_answer: str
+    correct_answer: int
 
     is_correct: bool
 
@@ -21,5 +21,6 @@ class AnswerReview(BaseModel):
 
     explanation: str | None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(
+        from_attributes=True,
+    )
